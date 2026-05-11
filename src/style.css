@@ -52,6 +52,7 @@
 
 body {
   margin: 0;
+  padding: 0;
 }
 
 h1,
@@ -70,6 +71,7 @@ h1 {
     margin: 20px 0;
   }
 }
+
 h2 {
   font-size: 24px;
   line-height: 118%;
@@ -79,6 +81,7 @@ h2 {
     font-size: 20px;
   }
 }
+
 p {
   margin: 0;
 }
@@ -293,4 +296,55 @@ code {
     right: 0;
     border-right-color: var(--border);
   }
+}
+
+/* ========== 客服管理滚动条美化 ========== */
+
+/* 会话列表滚动条 */
+.session-list .session-items {
+  overflow-y: auto !important;
+  height: 100% !important;
+}
+.session-list .session-items::-webkit-scrollbar {
+  width: 6px !important;
+}
+.session-list .session-items::-webkit-scrollbar-track {
+  background: #f5f5f5 !important;
+  border-radius: 3px !important;
+}
+.session-list .session-items::-webkit-scrollbar-thumb {
+  background: #d9d9d9 !important;
+  border-radius: 3px !important;
+  transition: all 0.3s ease !important;
+}
+.session-list .session-items::-webkit-scrollbar-thumb:hover {
+  background: #bfbfbf !important;
+  width: 8px !important;
+}
+
+/* 聊天消息区域滚动条 */
+/* .chat-manage .chat-card .t-card__body::-webkit-scrollbar {
+  width: 6px !important;
+} */
+.chat-manage .chat-card .t-card__body::-webkit-scrollbar-track {
+  background: #f5f5f5 !important;
+  border-radius: 3px !important;
+}
+.chat-manage .chat-card .t-card__body::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #d9d9d9, #bfbfbf) !important;
+  border-radius: 3px !important;
+  border: 1px solid transparent !important;
+  background-clip: padding-box !important;
+  transition: all 0.3s ease !important;
+}
+.chat-manage .chat-card .t-card__body::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #bfbfbf, #a6a6a6) !important;
+  width: 8px !important;
+}
+
+/* Firefox 滚动条样式 */
+.session-list .session-items,
+.chat-manage .chat-card .t-card__body {
+  scrollbar-width: thin;
+  scrollbar-color: #d9d9d9 #f5f5f5;
 }

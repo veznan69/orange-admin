@@ -92,7 +92,7 @@ async function handleLogin() {
     console.log('登录成功，存储的 admin_openid:', adminOpenid);
 
     MessagePlugin.success('登录成功');
-    router.push('/goods');
+    router.push('/dashboard');
   } catch (err) {
     console.error('登录失败:', err);
     MessagePlugin.error('网络错误，请稍后重试');

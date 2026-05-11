@@ -1,0 +1,25 @@
+{
+  "envId": "cloud1-0gk1j4mb29d57fbd",
+  "hosting": {
+    "root": ".",
+    "routes": [
+      {
+        "source": "/goods*",
+        "destination": "/dist/index.html"
+      },
+      {
+        "source": "/chat*",
+        "destination": "/dist/index.html"
+      },
+      {
+        "source": "/feedbacks*",
+        "destination": "/dist/index.html"
+      },
+      {
+        "source": "/*",
+        "destination": "/dist/index.html"
+      }
+    ],
+    "errorPage": "/dist/index.html"
+  }
+}

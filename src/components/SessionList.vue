@@ -24,7 +24,8 @@
           </div>
           <div class="session-bottom">
             <span class="session-last">{{ session.lastContent }}</span>
-            <t-badge v-if="session.unread" count="1" />
+            <!-- ✅ 改为 dot 模式，不显示数字 -->
+            <t-badge v-if="session.hasUnread" dot />
           </div>
           <div class="session-openid">{{ session.openid }}</div>
         </div>
@@ -61,6 +62,7 @@ function formatTime(date) {
   height: 100%;
   display: flex;
   flex-direction: column;
+  min-height: 0;       /* 防止内容撑开父级 */
 }
 .session-header {
   padding: 16px;
@@ -69,10 +71,12 @@ function formatTime(date) {
   align-items: center;
   justify-content: space-between;
   font-weight: 500;
+  flex-shrink: 0;       /* 新增：头部不收缩 */
 }
 .session-items {
   flex: 1;
   overflow-y: auto;
+  min-height: 0;         /* 已存在，没有问题 */
 }
 .session-item {
   display: flex;
@@ -91,7 +95,8 @@ function formatTime(date) {
 }
 .session-info {
   flex: 1;
-  overflow: hidden;
+  overflow: visible;    
+  min-width: 0;         
 }
 .session-top {
   display: flex;
@@ -110,14 +115,18 @@ function formatTime(date) {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  overflow: visible
 }
 .session-last {
-  font-size: 13px;
-  color: #666;
+  flex: 1;              
+  min-width: 0;         
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 180px;
+}
+.session-bottom :deep(.t-badge) {
+  flex-shrink: 0;
+  margin-left: 8px;     
 }
 .session-openid {
   font-size: 11px;

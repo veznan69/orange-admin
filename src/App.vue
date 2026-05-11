@@ -1,6 +1,6 @@
 <template>
   <t-layout class="app-layout">
-    <!-- 侧边栏菜单 -->
+    <!-- 左侧固定侧边栏 -->
     <t-aside :width="menuCollapsed ? '64px' : '220px'" class="app-aside">
       <div class="logo-area">
         <span v-if="!menuCollapsed">🍊 赣南脐橙</span>
@@ -11,16 +11,51 @@
         :collapsed="menuCollapsed"
         theme="light"
         @change="handleMenuChange"
+        class="app-menu"
       >
+        <t-menu-item value="/dashboard">
+          <template #icon><t-icon name="chart-bar" /></template>
+          数据看板
+        </t-menu-item>
         <t-menu-item value="/goods">
           <template #icon><t-icon name="shop" /></template>
           商品管理
         </t-menu-item>
-        <t-menu-item value="/chat">
-          <template #icon><t-icon name="chat" /></template>
-          客服管理
+        <t-menu-item value="/coupon">
+          <template #icon><t-icon name="wallet" /></template>
+          优惠券管理
         </t-menu-item>
-        <!-- 后续新增功能在此添加菜单项 -->
+        <t-submenu value="chat-group" title="客服管理">
+          <template #icon><t-icon name="chat" /></template>
+          <t-menu-item value="/chat/ai">
+            <template #icon><t-icon name="robot" /></template>
+            AI客服
+          </t-menu-item>
+          <t-menu-item value="/chat/manual">
+            <template #icon><t-icon name="user" /></template>
+            人工客服
+          </t-menu-item>
+        </t-submenu>
+        <t-menu-item value="/audit">
+          <template #icon><t-icon name="file-excel" /></template>
+          审核管理
+        </t-menu-item>
+        <t-menu-item value="/user-info">
+          <template #icon><t-icon name="user-search" /></template>
+          用户信息查询
+        </t-menu-item>
+        <t-menu-item value="/feedbacks">
+          <template #icon><t-icon name="notification" /></template>
+          投诉建议
+        </t-menu-item>
+        <t-menu-item value="/broadcast">
+          <template #icon><t-icon name="mail" /></template>
+          信息广播
+        </t-menu-item>
+        <t-menu-item value="/circle">
+          <template #icon><t-icon name="chat" /></template>
+          橙友圈管理
+        </t-menu-item>
       </t-menu>
       <div class="aside-footer">
         <t-button
@@ -33,11 +68,11 @@
       </div>
     </t-aside>
 
-    <!-- 内容区域 -->
-    <t-layout>
+    <!-- 右侧内容区 -->
+    <t-layout class="app-main-layout">
+      <!-- 顶部固定信息栏 -->
       <t-header class="app-header">
         <div class="header-left">
-          <!-- 移动端菜单按钮 -->
           <t-button
             variant="text"
             shape="square"
@@ -53,7 +88,6 @@
           <t-button variant="text" shape="square">
             <t-icon name="user" />
           </t-button>
-          <!-- 新增：退出登录按钮 -->
           <t-button variant="text" @click="handleLogout">
             <t-icon name="poweroff" />
             <span class="logout-text">退出</span>
@@ -61,6 +95,7 @@
         </div>
       </t-header>
 
+      <!-- 内容区域（自适应高度） -->
       <t-content class="app-content">
         <router-view />
       </t-content>
@@ -79,13 +114,45 @@
         theme="light"
         @change="handleMobileMenuChange"
       >
+        <t-menu-item value="/dashboard">
+          <template #icon><t-icon name="chart-bar" /></template>
+          数据看板
+        </t-menu-item>
         <t-menu-item value="/goods">
           <template #icon><t-icon name="shop" /></template>
           商品管理
         </t-menu-item>
-        <t-menu-item value="/chat">
+        <t-menu-item value="/coupon">
+          <template #icon><t-icon name="wallet" /></template>
+          优惠券管理
+        </t-menu-item>
+        <t-menu-item value="/chat/manual">
+          <template #icon><t-icon name="user" /></template>
+          人工客服
+        </t-menu-item>
+        <t-menu-item value="/chat/ai">
+          <template #icon><t-icon name="robot" /></template>
+          AI客服记录
+        </t-menu-item>
+        <t-menu-item value="/audit">
+          <template #icon><t-icon name="file-excel" /></template>
+          审核管理
+        </t-menu-item>
+        <t-menu-item value="/user-info">
+          <template #icon><t-icon name="user-search" /></template>
+          用户信息查询
+        </t-menu-item>
+        <t-menu-item value="/feedbacks">
+          <template #icon><t-icon name="notification" /></template>
+          投诉建议
+        </t-menu-item>
+        <t-menu-item value="/broadcast">
+          <template #icon><t-icon name="mail" /></template>
+          信息广播
+        </t-menu-item>
+        <t-menu-item value="/circle">
           <template #icon><t-icon name="chat" /></template>
-          客服管理
+          橙友圈管理
         </t-menu-item>
       </t-menu>
     </t-drawer>
@@ -99,8 +166,7 @@ import { useRouter, useRoute } from 'vue-router';
 const router = useRouter();
 const route = useRoute();
 
-const userRole = ref('admin'); // 实际应从登录获取
-
+const userRole = ref('admin');
 const menuCollapsed = ref(false);
 const mobileDrawerVisible = ref(false);
 
@@ -108,21 +174,24 @@ const activeMenu = computed(() => route.path);
 
 const pageTitle = computed(() => {
   const titles = {
+    '/dashboard': '数据看板',
     '/goods': '商品管理',
-    '/chat': '客服管理'
+    '/chat/manual': '人工客服',
+    '/chat/ai': 'AI客服记录',
+    '/feedbacks': '投诉建议',
+    '/broadcast': '信息广播',
+    '/audit': '审核管理',
+    '/coupon': '优惠券管理',
+    '/user-info': '用户信息查询',
+    '/circle': '橙友圈管理',
   };
   return titles[route.path] || '后台管理';
 });
 
 function handleLogout() {
-  // 清除所有登录相关的本地存储
   localStorage.removeItem('admin_openid');
   localStorage.removeItem('admin_role');
   localStorage.removeItem('admin_logged_in');
-  // 可选：保留上次输入的 openid 以便下次登录自动填充
-  // localStorage.removeItem('last_admin_openid'); 
-
-  // 跳转到登录页
   router.push('/login');
 }
 
@@ -135,27 +204,36 @@ function handleMobileMenuChange(value) {
   mobileDrawerVisible.value = false;
 }
 
-// 监听路由变化，移动端自动关闭抽屉
 watch(() => route.path, () => {
   mobileDrawerVisible.value = false;
 });
 </script>
 
 <style scoped>
+/* ========== 布局容器 ========== */
 .app-layout {
   min-height: 100vh;
+  display: flex;
+  flex-direction: row;
 }
 
+/* ========== 左侧固定侧边栏 ========== */
 .app-aside {
   background: #fff;
   border-right: 1px solid #e7e7e7;
   display: flex;
   flex-direction: column;
-  transition: width 0.2s;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 100;
+  transition: width 0.3s ease;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
 }
 
 .logo-area {
-  height: 64px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -163,15 +241,32 @@ watch(() => route.path, () => {
   font-weight: bold;
   color: #ff6600;
   border-bottom: 1px solid #f0f0f0;
+  flex-shrink: 0;
+}
+
+.app-menu {
+  flex: 1;
+  overflow-y: auto;
+  border: none;
 }
 
 .aside-footer {
-  margin-top: auto;
   padding: 16px;
   text-align: center;
   border-top: 1px solid #f0f0f0;
+  flex-shrink: 0;
 }
 
+/* ========== 右侧内容区 ========== */
+.app-main-layout {
+  margin-left: 220px;
+  display: flex;
+  flex-direction: column;
+  width: calc(100% - 220px);
+  transition: margin-left 0.3s ease;
+}
+
+/* ========== 顶部固定信息栏 ========== */
 .app-header {
   background: #fff;
   border-bottom: 1px solid #e7e7e7;
@@ -179,7 +274,14 @@ watch(() => route.path, () => {
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
-  height: 64px;
+  height: 60px;
+  position: fixed;
+  left: 220px;
+  right: 0;
+  top: 0;
+  z-index: 90;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: left 0.3s ease;
 }
 
 .header-left {
@@ -191,6 +293,7 @@ watch(() => route.path, () => {
 .page-title {
   font-size: 18px;
   font-weight: 500;
+  color: #333;
 }
 
 .header-right {
@@ -203,34 +306,79 @@ watch(() => route.path, () => {
   display: none;
 }
 
-.app-content {
-  padding: 20px;
-  background: #f5f7fa;
-  min-height: calc(100vh - 64px);
+.logout-text {
+  margin-left: 4px;
 }
 
-/* 移动端适配 */
+/* ========== 内容区域 ========== */
+.app-content {
+  margin-top: 60px;
+  padding: 24px;
+  background: #f5f7fa;
+  min-height: calc(100vh - 60px);
+  overflow-y: auto;
+}
+
+/* ========== 侧边栏折叠状态 ========== */
+.app-layout:has(.app-aside[style*="64px"]) .app-main-layout {
+  margin-left: 64px;
+  width: calc(100% - 64px);
+}
+
+.app-layout:has(.app-aside[style*="64px"]) .app-header {
+  left: 64px;
+}
+
+/* ========== 移动端适配 ========== */
 @media (max-width: 768px) {
   .app-aside {
     display: none;
   }
+
+  .app-main-layout {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .app-header {
+    left: 0;
+    padding: 0 16px;
+  }
+
+  .app-content {
+    padding: 12px;
+    margin-top: 60px;
+  }
+
   .mobile-menu-btn {
     display: inline-flex;
   }
-  .app-header {
-    padding: 0 16px;
-  }
-  .app-content {
-    padding: 12px;
+
+  .logout-text {
+    display: none;
   }
 }
 
-.logout-text {
-  margin-left: 4px;
+/* ========== 滚动条美化 ========== */
+.app-menu::-webkit-scrollbar,
+.app-content::-webkit-scrollbar {
+  width: 6px;
 }
-@media (max-width: 768px) {
-  .logout-text {
-    display: none; /* 移动端只显示图标 */
-  }
+
+.app-menu::-webkit-scrollbar-track,
+.app-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.app-menu::-webkit-scrollbar-thumb,
+.app-content::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+  transition: background 0.3s ease;
+}
+
+.app-menu::-webkit-scrollbar-thumb:hover,
+.app-content::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0;
 }
 </style>
