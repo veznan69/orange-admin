@@ -1,12 +1,12 @@
 <template>
   <div class="login-container">
     <t-card class="login-card" :bordered="false">
-      <h2 class="login-title">管理员登录</h2>
+      <h2 class="login-title">后台登录</h2>
       <t-form :data="formData" @submit="handleLogin">
-        <t-form-item label="管理员 OpenID" name="openid">
+        <t-form-item label="OpenID" name="openid">
           <t-input
             v-model="formData.openid"
-            placeholder="请输入管理员 openid"
+            placeholder="请输入管理员或商家的 openid"
             clearable
           />
         </t-form-item>
@@ -21,12 +21,21 @@
           </t-button>
         </t-form-item>
       </t-form>
-      <p class="login-tip">请输入在 users 集合中 role 为 admin 的 openid</p>
+      <p class="login-tip">请输入在 users 集合中 role 为 admin 或 merchant 的 openid</p>
     </t-card>
   </div>
 </template>
 
 <script setup>
+/**
+ * 登录页面
+ * 
+ * 【涉及数据库】
+ * - users: 验证管理员/商家身份 (查询 role 字段)
+ * 
+ * 【调用云函数】
+ * - verifyAdmin: 验证用户权限
+ */
 import { ref, reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { MessagePlugin } from 'tdesign-vue-next';
@@ -71,8 +80,8 @@ async function handleLogin() {
       return;
     }
 
-    if (!result.isAdmin) {
-      MessagePlugin.error('该用户不是管理员，无权登录');
+    if (!result.canLogin) {
+      MessagePlugin.error('该用户不是管理员或商家，无权登录');
       return;
     }
 
@@ -85,14 +94,18 @@ async function handleLogin() {
     localStorage.setItem('admin_role', role);
     localStorage.setItem('admin_logged_in', 'true');
 
-    // ========== 新增：记住本次成功登录的 openid ==========
+    // 记住本次成功登录的 openid
     localStorage.setItem('last_admin_openid', openid);
-    // =================================================
 
-    console.log('登录成功，存储的 admin_openid:', adminOpenid);
+    console.log('登录成功，存储的 admin_openid:', adminOpenid, 'role:', role);
 
     MessagePlugin.success('登录成功');
-    router.push('/dashboard');
+    // 商家默认跳转到商品管理
+    if (role === 'merchant') {
+      router.push('/goods');
+    } else {
+      router.push('/dashboard');
+    }
   } catch (err) {
     console.error('登录失败:', err);
     MessagePlugin.error('网络错误，请稍后重试');

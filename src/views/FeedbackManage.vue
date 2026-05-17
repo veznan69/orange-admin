@@ -1,4 +1,8 @@
 <template>
+  <!-- 
+    反馈管理页面
+    【涉及数据库】feedbacks
+  -->
   <div class="feedback-manage">
     <t-card :bordered="false" class="header-card">
       <div class="header-actions">

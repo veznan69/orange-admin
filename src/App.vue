@@ -13,49 +13,47 @@
         @change="handleMenuChange"
         class="app-menu"
       >
-        <t-menu-item value="/dashboard">
-          <template #icon><t-icon name="chart-bar" /></template>
-          数据看板
-        </t-menu-item>
-        <t-menu-item value="/goods">
-          <template #icon><t-icon name="shop" /></template>
-          商品管理
-        </t-menu-item>
-        <t-menu-item value="/coupon">
-          <template #icon><t-icon name="wallet" /></template>
-          优惠券管理
-        </t-menu-item>
-        <t-submenu value="chat-group" title="客服管理">
-          <template #icon><t-icon name="chat" /></template>
-          <t-menu-item value="/chat/ai">
-            <template #icon><t-icon name="robot" /></template>
-            AI客服
+        <!-- 固定顶部：数据看板 -->
+        <template v-for="item in pinnedTop" :key="item.route">
+          <t-menu-item v-if="!item.adminOnly || userRole === 'admin'" :value="item.route">
+            <template #icon><t-icon :name="item.icon" /></template>
+            {{ item.label }}
           </t-menu-item>
-          <t-menu-item value="/chat/manual">
-            <template #icon><t-icon name="user" /></template>
-            人工客服
+        </template>
+
+        <!-- 中间菜单（含客服管理二级菜单） -->
+        <template v-for="item in menuList" :key="item.value || item.route">
+          <t-submenu
+            v-if="item.type === 'submenu' && (!item.adminOnly || userRole === 'admin')"
+            :value="item.value"
+            :title="item.label"
+          >
+            <template #icon><t-icon :name="item.icon" /></template>
+            <t-menu-item
+              v-for="child in item.children"
+              :key="child.route"
+              :value="child.route"
+            >
+              <template #icon><t-icon :name="child.icon" /></template>
+              {{ child.label }}
+            </t-menu-item>
+          </t-submenu>
+          <t-menu-item
+            v-else-if="item.type === 'item' && (!item.adminOnly || userRole === 'admin')"
+            :value="item.route"
+          >
+            <template #icon><t-icon :name="item.icon" /></template>
+            {{ item.label }}
           </t-menu-item>
-        </t-submenu>
-        <t-menu-item value="/audit">
-          <template #icon><t-icon name="file-excel" /></template>
-          审核管理
-        </t-menu-item>
-        <t-menu-item value="/user-info">
-          <template #icon><t-icon name="user-search" /></template>
-          用户信息查询
-        </t-menu-item>
-        <t-menu-item value="/feedbacks">
-          <template #icon><t-icon name="notification" /></template>
-          投诉建议
-        </t-menu-item>
-        <t-menu-item value="/broadcast">
-          <template #icon><t-icon name="mail" /></template>
-          信息广播
-        </t-menu-item>
-        <t-menu-item value="/circle">
-          <template #icon><t-icon name="chat" /></template>
-          橙友圈管理
-        </t-menu-item>
+        </template>
+
+        <!-- 固定底部：系统信息 + 数据管理（数据管理永远在最底边） -->
+        <template v-for="item in pinnedBottom" :key="item.route">
+          <t-menu-item v-if="!item.adminOnly || userRole === 'admin'" :value="item.route">
+            <template #icon><t-icon :name="item.icon" /></template>
+            {{ item.label }}
+          </t-menu-item>
+        </template>
       </t-menu>
       <div class="aside-footer">
         <t-button
@@ -82,6 +80,10 @@
             <t-icon name="menu" />
           </t-button>
           <span class="page-title">{{ pageTitle }}</span>
+          <t-tag v-if="pageDatabaseInfo" theme="success" variant="light" class="db-tag">
+            <template #icon><t-icon name="database" /></template>
+            {{ pageDatabaseInfo }}
+          </t-tag>
         </div>
         <div class="header-right">
           <t-tag theme="primary">{{ userRole === 'admin' ? '管理员' : '商家' }}</t-tag>
@@ -114,46 +116,47 @@
         theme="light"
         @change="handleMobileMenuChange"
       >
-        <t-menu-item value="/dashboard">
-          <template #icon><t-icon name="chart-bar" /></template>
-          数据看板
-        </t-menu-item>
-        <t-menu-item value="/goods">
-          <template #icon><t-icon name="shop" /></template>
-          商品管理
-        </t-menu-item>
-        <t-menu-item value="/coupon">
-          <template #icon><t-icon name="wallet" /></template>
-          优惠券管理
-        </t-menu-item>
-        <t-menu-item value="/chat/manual">
-          <template #icon><t-icon name="user" /></template>
-          人工客服
-        </t-menu-item>
-        <t-menu-item value="/chat/ai">
-          <template #icon><t-icon name="robot" /></template>
-          AI客服记录
-        </t-menu-item>
-        <t-menu-item value="/audit">
-          <template #icon><t-icon name="file-excel" /></template>
-          审核管理
-        </t-menu-item>
-        <t-menu-item value="/user-info">
-          <template #icon><t-icon name="user-search" /></template>
-          用户信息查询
-        </t-menu-item>
-        <t-menu-item value="/feedbacks">
-          <template #icon><t-icon name="notification" /></template>
-          投诉建议
-        </t-menu-item>
-        <t-menu-item value="/broadcast">
-          <template #icon><t-icon name="mail" /></template>
-          信息广播
-        </t-menu-item>
-        <t-menu-item value="/circle">
-          <template #icon><t-icon name="chat" /></template>
-          橙友圈管理
-        </t-menu-item>
+        <!-- 固定顶部：数据看板 -->
+        <template v-for="item in pinnedTop" :key="item.route">
+          <t-menu-item v-if="!item.adminOnly || userRole === 'admin'" :value="item.route">
+            <template #icon><t-icon :name="item.icon" /></template>
+            {{ item.label }}
+          </t-menu-item>
+        </template>
+
+        <!-- 中间菜单（含客服管理二级菜单） -->
+        <template v-for="item in menuList" :key="item.value || item.route">
+          <t-submenu
+            v-if="item.type === 'submenu' && (!item.adminOnly || userRole === 'admin')"
+            :value="item.value"
+            :title="item.label"
+          >
+            <template #icon><t-icon :name="item.icon" /></template>
+            <t-menu-item
+              v-for="child in item.children"
+              :key="child.route"
+              :value="child.route"
+            >
+              <template #icon><t-icon :name="child.icon" /></template>
+              {{ child.label }}
+            </t-menu-item>
+          </t-submenu>
+          <t-menu-item
+            v-else-if="item.type === 'item' && (!item.adminOnly || userRole === 'admin')"
+            :value="item.route"
+          >
+            <template #icon><t-icon :name="item.icon" /></template>
+            {{ item.label }}
+          </t-menu-item>
+        </template>
+
+        <!-- 固定底部：系统信息 + 数据管理（数据管理永远在最底边） -->
+        <template v-for="item in pinnedBottom" :key="item.route">
+          <t-menu-item v-if="!item.adminOnly || userRole === 'admin'" :value="item.route">
+            <template #icon><t-icon :name="item.icon" /></template>
+            {{ item.label }}
+          </t-menu-item>
+        </template>
       </t-menu>
     </t-drawer>
   </t-layout>
@@ -162,30 +165,72 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import { routeServiceMap } from './config/routeServiceMap';
 
 const router = useRouter();
 const route = useRoute();
 
-const userRole = ref('admin');
+const userRole = ref(localStorage.getItem('admin_role') || 'admin');
 const menuCollapsed = ref(false);
 const mobileDrawerVisible = ref(false);
 
 const activeMenu = computed(() => route.path);
 
+// 从 routeServiceMap 动态生成页面标题
 const pageTitle = computed(() => {
-  const titles = {
-    '/dashboard': '数据看板',
-    '/goods': '商品管理',
-    '/chat/manual': '人工客服',
-    '/chat/ai': 'AI客服记录',
-    '/feedbacks': '投诉建议',
-    '/broadcast': '信息广播',
-    '/audit': '审核管理',
-    '/coupon': '优惠券管理',
-    '/user-info': '用户信息查询',
-    '/circle': '橙友圈管理',
-  };
-  return titles[route.path] || '后台管理';
+  const found = routeServiceMap.find(r => r.route === route.path);
+  return found ? found.label : '后台管理';
+});
+
+// 从 routeServiceMap 动态生成数据库连接信息
+const pageDatabaseInfo = computed(() => {
+  const found = routeServiceMap.find(r => r.route === route.path);
+  if (!found) return '';
+  return found.databases.join(', ');
+});
+
+// 固定顶部：数据看板
+const pinnedTop = computed(() =>
+  routeServiceMap.filter(r => r.route === '/dashboard')
+);
+
+// 固定底部：系统信息 + 数据管理（数据管理永远在最底边）
+const pinnedBottom = computed(() => [
+  routeServiceMap.find(r => r.route === '/system-info'),
+  routeServiceMap.find(r => r.route === '/data-manage')
+].filter(Boolean));
+
+// 中间菜单（把客服管理合并为 submenu）
+const menuList = computed(() => {
+  const result = [];
+  let chatGroup = null;
+
+  for (const item of routeServiceMap) {
+    // 跳过固定顶部和底部
+    if (['/dashboard', '/data-manage', '/system-info'].includes(item.route)) {
+      continue;
+    }
+
+    // 合并 /chat/* 为客服管理 submenu
+    if (item.route.startsWith('/chat')) {
+      if (!chatGroup) {
+        chatGroup = {
+          type: 'submenu',
+          value: 'chat-group',
+          label: '客服管理',
+          icon: 'chat',
+          adminOnly: true,
+          children: []
+        };
+        result.push(chatGroup);
+      }
+      chatGroup.children.push({ type: 'item', ...item });
+    } else {
+      result.push({ type: 'item', ...item });
+    }
+  }
+
+  return result;
 });
 
 function handleLogout() {
@@ -294,6 +339,15 @@ watch(() => route.path, () => {
   font-size: 18px;
   font-weight: 500;
   color: #333;
+}
+
+.db-tag {
+  margin-left: 12px;
+  font-size: 12px;
+  max-width: 400px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .header-right {

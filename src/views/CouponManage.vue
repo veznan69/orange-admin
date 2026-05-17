@@ -1,4 +1,8 @@
 <template>
+  <!-- 
+    优惠券管理页面
+    【涉及数据库】coupons
+  -->
   <div class="coupon-manage">
     <!-- 头部操作栏 -->
     <t-card :bordered="false" class="header-card">

@@ -1,4 +1,8 @@
 <template>
+  <!-- 
+    客服聊天仪表盘
+    【涉及数据库】chat_messages, ai_chat_history
+  -->
   <div class="chat-dashboard">
     <!-- 移动端会话列表 -->
     <div v-if="isMobile && !currentSession" class="session-list-mobile">

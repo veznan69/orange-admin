@@ -1,4 +1,8 @@
 <template>
+  <!-- 
+    AI对话记录页面
+    【涉及数据库】ai_chat_history
+  -->
   <div class="ai-records">
     <!-- 移动端会话列表（独立显示） -->
     <div v-if="isMobile && !currentSession" class="session-list-mobile">

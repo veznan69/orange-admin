@@ -1,4 +1,8 @@
 <template>
+  <!-- 
+    审核管理页面
+    【涉及数据库】merchant_applications (商家申请), goods_products (商品审核)
+  -->
   <div class="audit-manage">
     <t-card :bordered="false" class="header-card">
       <div class="header-actions">

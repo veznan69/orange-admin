@@ -1,4 +1,8 @@
 <template>
+  <!-- 
+    数据仪表盘
+    【涉及数据库】orders, users, goods_products
+  -->
   <div class="data-statistics">
     <!-- 顶部筛选栏 -->
     <t-card :bordered="false" class="filter-card">

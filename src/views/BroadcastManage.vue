@@ -1,4 +1,8 @@
 <template>
+  <!-- 
+    广播消息管理页面
+    【涉及数据库】broadcasts, user_messages
+  -->
   <div class="broadcast-manage">
     <!-- 发送广播 -->
     <t-card :bordered="false" class="compose-card">

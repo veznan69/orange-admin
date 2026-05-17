@@ -1,4 +1,8 @@
 <template>
+  <!-- 
+    橙友圈管理页面
+    【涉及数据库】youquan_posts, youquan_comments, youquan_reports
+  -->
   <div class="circle-manage">
     <t-tabs v-model="activeTab" @change="onTabChange">
       <!-- 帖子管理 -->

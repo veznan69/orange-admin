@@ -1,4 +1,8 @@
 <template>
+  <!-- 
+    用户信息查询页面
+    【涉及数据库】users, orders, adoptions, carts 等
+  -->
     <div class="user-info-query">
       <!-- 搜索栏 -->
       <t-card :bordered="false" class="header-card">

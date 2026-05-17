@@ -1,4 +1,8 @@
 <template>
+  <!-- 
+    客服聊天管理页面
+    【涉及数据库】chat_messages
+  -->
   <div class="chat-manage">
     <!-- 移动端会话列表（独立显示） -->
     <div v-if="isMobile && !currentSession" class="session-list-mobile">
